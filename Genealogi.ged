@@ -1,0 +1,852 @@
+0 HEAD
+1 SOUR genealogy-converter
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 CHAR UTF-8
+0 @P0001@ INDI
+1 NAME Роберт
+1 BIRT
+2 DATE 10.04.1862
+0 @P0002@ INDI
+1 NAME Яков
+1 NOTE 25.07.1857
+0 @P0003@ INDI
+1 NAME Михалина Бабицкая
+1 NOTE (л 1-18)
+0 @P0004@ INDI
+1 NAME Климентий
+1 NOTE 22.12.1829
+0 @P0005@ INDI
+1 NAME Иван
+1 BIRT
+2 DATE 10.08.1869
+0 @P0006@ INDI
+1 NAME Мария Григорьевна Павловская
+0 @P0007@ INDI
+1 NAME Иосиф-Антон
+1 BIRT
+2 DATE 1841
+0 @P0008@ INDI
+1 NAME Полина Романовна Ржеутская
+1 NOTE 1841 з.Лозино
+0 @P0009@ INDI
+1 NAME Александр
+1 CHR
+2 DATE 27.04.1785
+0 @P0010@ INDI
+1 NAME Марциалла
+1 NOTE (лист 129)
+0 @P0011@ INDI
+1 NAME Виктория
+0 @P0012@ INDI
+1 NAME Иосиф
+1 NOTE (л.937-8-5 л.133-134); 06.03.1908
+0 @P0013@ INDI
+1 NAME Семен
+0 @P0014@ INDI
+1 NAME Катарина Козловская
+0 @P0015@ INDI
+1 NAME Сергей
+1 NOTE 1979
+0 @P0016@ INDI
+1 NAME Иосиф-Яков
+1 NOTE (л.130); 20.03.1821
+0 @P0017@ INDI
+1 NAME Юзефа Фроникевич
+0 @P0018@ INDI
+1 NAME Антон
+1 NOTE 23.10.1897
+0 @P0019@ INDI
+1 NAME Мария
+1 NOTE 1860
+0 @P0020@ INDI
+1 NAME Доминик
+1 BIRT
+2 DATE 04.07.1860
+1 NOTE (л.262)
+0 @P0021@ INDI
+1 NAME Гектор
+1 BIRT
+2 DATE 21.01.1841
+1 NOTE (л.193)
+0 @P0022@ INDI
+1 NAME Юзефа-Алина Яковлевна
+1 NOTE (полковник;г.Паневежис)
+0 @P0023@ INDI
+1 NAME Стефан (Степан) крещен 16.10.1756г.
+0 @P0024@ INDI
+1 NAME Гилярий
+1 NOTE (л.233); 04.01.1839
+0 @P0025@ INDI
+1 NAME Ян (Иван)
+1 CHR
+2 DATE 01.03.1780
+0 @P0026@ INDI
+1 NAME Матеуш-Иван (Матвей)
+1 CHR
+2 DATE 09.10.1796
+0 @P0027@ INDI
+1 NAME Александр-Павел
+1 CHR
+2 DATE 31.07.1799
+0 @P0028@ INDI
+1 NAME Гонората Сливинская
+0 @P0029@ INDI
+1 NAME Иван 2-й
+1 CHR
+2 DATE 25.05.1803
+0 @P0030@ INDI
+1 NAME Агнешка Новицкая
+1 NOTE (л 233)
+0 @P0031@ INDI
+1 NAME Эдуард
+1 BIRT
+2 DATE 22.10.1862
+1 NOTE (л.262)
+0 @P0032@ INDI
+1 NAME Розалия Невяровская (застенок Черничан Остров)
+0 @P0033@ INDI
+1 NAME Гилярий
+1 CHR
+2 DATE 15.07.1834
+0 @P0034@ INDI
+1 NAME Михалина Беганская
+0 @P0035@ INDI
+1 NAME Людвиг
+0 @P0036@ INDI
+1 NAME Альфонсина май 1937г.
+0 @P0037@ INDI
+1 NAME Августин
+1 NOTE 18.01.1906
+0 @P0038@ INDI
+1 NAME Викентий
+1 NOTE 20.07.1837
+0 @P0039@ INDI
+1 NAME Станислав
+1 BIRT
+2 DATE 02.07.1874
+0 @P0040@ INDI
+1 NAME Михалина Мироновна Шимович
+1 NOTE (л.526)
+0 @P0041@ INDI
+1 NAME Содалия 06.12.1931г.
+0 @P0042@ INDI
+1 NAME Степан в Борисовском костеле
+1 CHR
+2 DATE 02.02.1833
+0 @P0043@ INDI
+1 NAME Элиаш ок. 1735г. – ок. 1882г.
+1 NOTE (Илья)
+0 @P0044@ INDI
+1 NAME Теодория
+1 NOTE (л.130 об; 364)
+0 @P0045@ INDI
+1 NAME Викентий
+1 BIRT
+2 DATE 29.04.1874
+0 @P0046@ INDI
+1 NAME Мария Околова
+1 NOTE (Мальвина)
+0 @P0047@ INDI
+1 NAME Леонид
+1 NOTE 1949
+0 @P0048@ INDI
+1 NAME Люциан
+1 NOTE (л.466 его письмо)
+0 @P0049@ INDI
+1 NAME Гилярий
+1 BIRT
+2 DATE 13.01.1846
+1 NOTE (л.233)
+0 @P0050@ INDI
+1 NAME Иван Гракало-Горавский, жил
+1 NOTE (фонд 319, оп 2, дело 729, листы 128, 134 об); 1525 г
+0 @P0051@ INDI
+1 NAME Владислав
+1 BIRT
+2 DATE 26.03.1900
+1 NOTE (л.484-486)
+0 @P0052@ INDI
+1 NAME Петр-Марцелл
+1 CHR
+2 DATE 05.06.1814
+1 NOTE (л.130)
+0 @P0053@ INDI
+1 NAME Федор
+1 CHR
+2 DATE 09.05.1794
+0 @P0054@ INDI
+1 NAME Изабелла Устинович
+0 @P0055@ INDI
+1 NAME Апполинарий
+1 NOTE 12.02.1891
+0 @P0056@ INDI
+1 NAME Ян 16.05.1929г.
+0 @P0057@ INDI
+1 NAME Михаил ?
+1 BIRT
+2 DATE 27.07.1878
+0 @P0058@ INDI
+1 NAME Мальвина Стефанович
+0 @P0059@ INDI
+1 NAME Иван
+1 NOTE 01.07.1882
+0 @P0060@ INDI
+1 NAME Павел крещен 30.09.1762г.
+0 @P0061@ INDI
+1 NAME Констанция
+0 @P0062@ INDI
+1 NAME Даниил
+0 @P0063@ INDI
+1 NAME Болеслав
+1 NOTE 29.03.1893
+0 @P0064@ INDI
+1 NAME Юлиан
+1 NOTE 10.01.1829
+0 @P0065@ INDI
+1 NAME Марцианна Беганская
+0 @P0066@ INDI
+1 NAME Ремигиус
+1 NOTE 01.09.1877
+0 @P0067@ INDI
+1 NAME Иван-Августин
+1 NOTE (л.353); 20.07.1843 кр. В Заславском костеле
+0 @P0068@ INDI
+1 NAME Мартин (умер в детстве)
+0 @P0069@ INDI
+1 NAME Ипполит
+1 NOTE 26.02.1889
+0 @P0070@ INDI
+1 NAME Альфонс
+1 NOTE 18.11.1890
+0 @P0071@ INDI
+1 NAME Янина
+0 @P0072@ INDI
+1 NAME Станислав
+1 NOTE 01.01.1883
+0 @P0073@ INDI
+1 NAME Станислав
+1 NOTE 31.05.1858
+0 @P0074@ INDI
+1 NAME Виктория Станиславовна – Александровна
+1 NOTE (л.470)
+0 @P0075@ INDI
+1 NAME Доминик
+1 BIRT
+2 DATE 20.09.1864
+0 @P0076@ INDI
+1 NAME Антон
+1 NOTE (лист 131 об); 01.07.1834
+0 @P0077@ INDI
+1 NAME Игнатий-Михаил
+0 @P0078@ INDI
+1 NAME Вацлав
+1 NOTE 09.04.1911
+0 @P0079@ INDI
+1 NAME Адам
+1 NOTE 14.05.1860 л.262 г.Игумен
+0 @P0080@ INDI
+1 NAME Викентий
+1 CHR
+2 DATE 12.06.1801
+0 @P0081@ INDI
+1 NAME Франц
+1 NOTE (л.549-551)
+0 @P0082@ INDI
+1 NAME Францишка из Зубовичей
+0 @P0083@ INDI
+1 NAME Ипполит
+1 CHR
+2 DATE 06.08.1828
+0 @P0084@ INDI
+1 NAME Ефимия Никитична Алексеенко
+1 NOTE (г.Киев; л.405)
+0 @P0085@ INDI
+1 NAME Франц родился
+1 NOTE 08.02.1855 г
+0 @P0086@ INDI
+1 NAME Валериан
+1 NOTE 28.10.1834
+0 @P0087@ INDI
+1 NAME Вацлав
+1 NOTE 10.09.1877
+0 @P0088@ INDI
+1 NAME Анеля
+1 NOTE 1868 г.р.
+0 @P0089@ INDI
+1 NAME Марьян-Роман В Житомире (родина его матери)
+1 BIRT
+2 DATE 22.10.1906
+0 @P0090@ INDI
+1 NAME Алина
+1 NOTE (Л.405,406); 01.06.1913
+0 @P0091@ INDI
+1 NAME Игнатий крещен 29.10.1796г.
+1 NOTE (лист 129 оборот)
+0 @P0092@ INDI
+1 NAME Бронислава
+1 NOTE 09.03.1914
+0 @P0093@ INDI
+1 NAME Иосиф
+1 NOTE 01.10.1885
+0 @P0094@ INDI
+1 NAME Петр
+1 NOTE 30.05.1870
+0 @P0095@ INDI
+1 NAME Елена Антоновна г.Игумен
+0 @P0096@ INDI
+1 NAME Юрий
+1 NOTE 20.04.1830
+0 @P0097@ INDI
+1 NAME София
+1 NOTE 15.08.1935
+0 @P0098@ INDI
+1 NAME Анеля
+1 NOTE (л.225); 12.01.1910
+0 @P0099@ INDI
+1 NAME Стефан-Александр
+0 @P0100@ INDI
+1 NAME Карл
+1 CHR
+2 DATE 08.11.1838
+1 NOTE (л.369)
+0 @P0101@ INDI
+1 NAME Лаурентина Верниковская (г.Березино)
+0 @P0102@ INDI
+1 NAME Антон
+1 NOTE 01.11.1894
+0 @P0103@ INDI
+1 NAME Иосиф
+1 NOTE (л.475, 477); 08.02.1915
+0 @P0104@ INDI
+1 NAME Иван
+1 BIRT
+2 DATE 07.06.1851
+0 @P0105@ INDI
+1 NAME Автор историк Илья Курков Х-ХII
+1 NOTE 1999 г.
+0 @P0106@ INDI
+1 NAME Людвиг
+1 NOTE (л.473, 476 – автограф его отца); 12.07.1899
+0 @P0107@ INDI
+1 NAME Павел
+1 NOTE 16.08.1887
+0 @P0108@ INDI
+1 NAME Амелия
+1 BIRT
+2 DATE 1842
+1 NOTE (л.240)
+0 @P0109@ INDI
+1 NAME Иосиф
+1 NOTE 05.04.1865 г.Игумен
+0 @P0110@ INDI
+1 NAME Аполинарий
+1 NOTE (л.262); 1846
+0 @P0111@ INDI
+1 NAME Ядвига
+0 @P0112@ INDI
+1 NAME Петр
+1 BIRT
+2 DATE 01.08.1871
+0 @P0113@ INDI
+1 NAME Альбертина Соколовская
+1 NOTE (Эльжбета)
+0 @P0114@ INDI
+1 NAME Аделия
+1 NOTE (л.357); 1866 г.р.
+0 @P0115@ INDI
+1 NAME Вильгельм
+1 NOTE 19.04.1908
+0 @P0116@ INDI
+1 NAME Мария Виницкая
+1 NOTE 23.12.1914
+0 @P0117@ INDI
+1 NAME Казимир – Антон
+1 NOTE (л.415-417,443)
+0 @P0118@ INDI
+1 NAME Фелициан
+1 NOTE 25.03.1824
+0 @P0119@ INDI
+1 NAME Анна Петровичева
+1 NOTE (л.329)
+0 @P0120@ INDI
+1 NAME Иван (1866?)
+1 BIRT
+2 DATE 1856
+1 NOTE (л.403;519)
+0 @P0121@ INDI
+1 NAME Леонарда
+0 @P0122@ INDI
+1 NAME Станислав
+1 BIRT
+2 DATE 31.05.1858
+1 NOTE (л.269;329)
+0 @P0123@ INDI
+1 NAME Альфреда 04.03.1933г.
+0 @P0124@ INDI
+1 NAME Викентий
+1 NOTE 25.03.1833
+0 @P0125@ INDI
+1 NAME Клементий-Станислав-Костко
+1 CHR
+2 DATE 13.11.1810
+0 @P0126@ INDI
+1 NAME Бригида Кудревичева
+0 @P0127@ INDI
+1 NAME Ипполит
+1 BIRT
+2 DATE 06.10.1847
+0 @P0128@ INDI
+1 NAME Мария Гуща
+1 NOTE (л.233; 496; 505)
+0 @P0129@ INDI
+1 NAME Станислав
+1 NOTE 13.11.1883
+0 @P0130@ INDI
+1 NAME Петр
+1 BIRT
+2 DATE 01.06.1876
+1 NOTE (л.454 – 463а)
+0 @P0131@ INDI
+1 NAME Иосиф
+1 NOTE 25.03.1833
+0 @P0132@ INDI
+1 NAME Зигмунд 17.03.1928г.
+0 @P0133@ INDI
+1 NAME Аполинарий
+1 CHR
+2 DATE 22.01.1833
+0 @P0134@ INDI
+1 NAME Валериан
+0 @P0135@ INDI
+1 NAME Иосиф
+1 NOTE 16.11.1889
+0 @P0136@ INDI
+1 NAME Бронислав
+1 NOTE 01.01.1882
+0 @P0137@ INDI
+1 NAME Илья
+1 NOTE 22.05.1895
+0 @P0138@ INDI
+1 NAME Фелициан
+1 NOTE (л 262); 20.09.1864
+0 @P0139@ INDI
+1 NAME Садалия Славошевская
+0 @P0140@ INDI
+1 NAME Адольф
+1 BIRT
+2 DATE 13.10.1866
+0 @P0141@ INDI
+1 NAME Мария Юзефа Скальская (д.335)
+0 @P0142@ INDI
+1 NAME Фаддей
+1 CHR
+2 DATE 07.08.1804
+0 @P0143@ INDI
+1 NAME Розалия Станкевич
+0 @P0144@ INDI
+1 NAME Петр
+1 NOTE 1915
+0 @P0145@ INDI
+1 NAME Иван
+1 NOTE 15.04.1842
+0 @P0146@ INDI
+1 NAME Вильгельм
+1 NOTE 16.04.1906
+0 @P0147@ INDI
+1 NAME Гилярий
+1 CHR
+2 DATE 19.04.1808
+0 @P0148@ INDI
+1 NAME Марианна Устинович
+1 NOTE (л.362)
+0 @P0149@ INDI
+1 NAME Апполинарий
+1 BIRT
+2 DATE 09.02.1864
+0 @P0150@ INDI
+1 NAME Юзефа
+0 @P0151@ INDI
+1 NAME Петр
+1 NOTE (л.262); 30.08.1853
+0 @P0152@ INDI
+1 NAME Елизавета Антоновна
+1 NOTE (православная)
+0 @P0153@ INDI
+1 NAME Викентий
+1 NOTE 13.07.1849
+0 @P0154@ INDI
+1 NAME Михаил-Андрей
+1 CHR
+2 DATE 20.12.1811
+0 @P0155@ INDI
+1 NAME Владимир
+0 @P0156@ INDI
+1 NAME Николай
+1 NOTE (л.288)
+0 @P0157@ INDI
+1 NAME Степан
+1 NOTE 25.08.1889
+0 @P0158@ INDI
+1 NAME Ромуальд
+0 @P0159@ INDI
+1 NAME Михаил
+1 NOTE 29.09.1935 г.
+0 @P0160@ INDI
+1 NAME Бенедикт
+1 BIRT
+2 DATE 09.04.1872
+1 NOTE (л.393)
+0 @P0161@ INDI
+1 NAME Франц
+1 CHR
+2 DATE 03.09.1773
+1 DEAT
+2 DATE 19.06.1832
+0 @P0162@ INDI
+1 NAME Антон-Павел
+1 NOTE 09.03.1834
+0 @P0163@ INDI
+1 NAME Доминик-Фабиан
+1 NOTE (л 354); 10.07.1843
+0 @P0164@ INDI
+1 NAME Паулина Пржигодская
+0 @P0165@ INDI
+1 NAME Иван 1-й
+1 CHR
+2 DATE 03.05.1774
+1 NOTE (319-2-729 л.129 об 363)
+0 @P0166@ INDI
+1 NAME Иосиф
+1 BIRT
+2 DATE 28.03.1906
+0 @F0001@ FAM
+1 HUSB @P0002@
+1 WIFE @P0003@
+1 CHIL @P0136@
+1 CHIL @P0157@
+1 NOTE Source text: Яков 25.07.1857 + Михалина Бабицкая (л 1-18)
+0 @F0002@ FAM
+1 HUSB @P0005@
+1 WIFE @P0006@
+1 CHIL @P0012@
+1 CHIL @P0018@
+1 CHIL @P0078@
+1 CHIL @P0092@
+1 CHIL @P0098@
+1 CHIL @P0106@
+1 CHIL @P0146@
+1 NOTE Source text: Иван р.10.08.1869 + Мария Григорьевна Павловская
+0 @F0003@ FAM
+1 HUSB @P0007@
+1 WIFE @P0008@
+1 CHIL @P0001@
+1 CHIL @P0019@
+1 CHIL @P0045@
+1 CHIL @P0057@
+1 CHIL @P0075@
+1 CHIL @P0088@
+1 CHIL @P0114@
+1 CHIL @P0130@
+1 NOTE Source text: Иосиф-Антон род. 1841 г + Полина Романовна Ржеутская 1841 з.Лозино
+0 @F0004@ FAM
+1 HUSB @P0009@
+1 WIFE @P0010@
+1 CHIL @P0154@
+1 NOTE Source text: Александр кр.27.04.1785г. + Марциалла (лист 129)
+0 @F0005@ FAM
+1 HUSB @P0013@
+1 WIFE @P0014@
+1 CHIL @P0009@
+1 CHIL @P0023@
+1 CHIL @P0060@
+1 NOTE Source text: Семен + Катарина Козловская
+0 @F0006@ FAM
+1 HUSB @P0016@
+1 WIFE @P0017@
+1 CHIL @P0122@
+1 CHIL @P0127@
+1 NOTE Source text: Иосиф-Яков 20.03.1821 (л.130) + Юзефа Фроникевич
+0 @F0007@ FAM
+1 HUSB @P0021@
+1 WIFE @P0022@
+1 CHIL @P0117@
+1 NOTE Source text: Гектор р.21.01.1841г. (л.193) + Юзефа-Алина Яковлевна (полковник;г.Паневежис)
+0 @F0008@ FAM
+1 HUSB @P0027@
+1 WIFE @P0028@
+1 CHIL @P0076@
+1 CHIL @P0163@
+1 NOTE Source text: Александр-Павел кр.31.07.1799 + Гонората Сливинская
+0 @F0009@ FAM
+1 HUSB @P0029@
+1 WIFE @P0030@
+1 CHIL @P0024@
+1 CHIL @P0096@
+1 CHIL @P0124@
+1 CHIL @P0131@
+1 CHIL @P0145@
+1 NOTE Source text: Иван 2-й кр. 25.05.1803 + Агнешка Новицкая (л 233)
+0 @F0010@ FAM
+1 HUSB @P0031@
+1 WIFE @P0032@
+1 CHIL @P0166@
+1 NOTE Source text: Эдуард р.22.10.1862г. (л.262) + Розалия Невяровская (застенок Черничан Остров)
+0 @F0011@ FAM
+1 HUSB @P0033@
+1 WIFE @P0034@
+1 CHIL @P0005@
+1 CHIL @P0039@
+1 CHIL @P0112@
+1 CHIL @P0138@
+1 CHIL @P0156@
+1 NOTE Source text: Гилярий кр.15.07.1834 г + Михалина Беганская
+0 @F0012@ FAM
+1 HUSB @P0039@
+1 WIFE @P0040@
+1 NOTE Source text: Станислав р.02.07.1874 + Михалина Мироновна Шимович (л.526)
+0 @F0013@ FAM
+1 HUSB @P0043@
+1 WIFE @P0044@
+1 CHIL @P0025@
+1 CHIL @P0161@
+1 NOTE Source text: Элиаш (Илья) ок. 1735г. – ок. 1882г. + Теодория (л.130 об; 364)
+0 @F0014@ FAM
+1 HUSB @P0045@
+1 WIFE @P0046@
+1 CHIL @P0037@
+1 CHIL @P0090@
+1 CHIL @P0103@
+1 NOTE Source text: Викентий р.29.04.1874 + Мария (Мальвина) Околова
+0 @F0015@ FAM
+1 HUSB @P0053@
+1 WIFE @P0054@
+1 CHIL @P0038@
+1 NOTE Source text: Федор кр. 09.05.1794 + Изабелла Устинович
+0 @F0016@ FAM
+1 HUSB @P0057@
+1 WIFE @P0058@
+1 NOTE Source text: Михаил р.27.07.1878? + Мальвина Стефанович
+0 @F0017@ FAM
+1 HUSB @P0060@
+1 WIFE @P0061@
+1 CHIL @P0053@
+1 CHIL @P0080@
+1 CHIL @P0142@
+1 NOTE Source text: Павел крещен 30.09.1762г. + Констанция
+0 @F0018@ FAM
+1 HUSB @P0064@
+1 WIFE @P0065@
+1 CHIL @P0020@
+1 CHIL @P0031@
+1 CHIL @P0160@
+1 NOTE Source text: Юлиан 10.01.1829 + Марцианна Беганская
+0 @F0019@ FAM
+1 HUSB @P0070@
+1 WIFE @P0071@
+1 CHIL @P0036@
+1 CHIL @P0056@
+1 CHIL @P0123@
+1 CHIL @P0132@
+1 CHIL @P0159@
+1 NOTE Source text: Альфонс 18.11.1890 + Янина
+0 @F0020@ FAM
+1 HUSB @P0073@
+1 WIFE @P0074@
+1 NOTE Source text: Станислав 31.05.1858 + Виктория Станиславовна – Александровна (л.470)
+0 @F0021@ FAM
+1 HUSB @P0081@
+1 WIFE @P0082@
+1 NOTE Source text: Франц (л.549-551) + Францишка из Зубовичей
+0 @F0022@ FAM
+1 HUSB @P0083@
+1 WIFE @P0084@
+1 NOTE Source text: Ипполит кр.06.08.1828г. + Ефимия Никитична Алексеенко (г.Киев; л.405)
+0 @F0023@ FAM
+1 HUSB @P0094@
+1 WIFE @P0095@
+1 NOTE Source text: Петр 30.05.1870 + Елена Антоновна г.Игумен
+0 @F0024@ FAM
+1 HUSB @P0100@
+1 WIFE @P0101@
+1 CHIL @P0066@
+1 NOTE Source text: Карл кр.08.11.1838г. (л.369) + Лаурентина Верниковская (г.Березино)
+0 @F0025@ FAM
+1 HUSB @P0112@
+1 WIFE @P0113@
+1 NOTE Source text: Петр р.01.08.1871 + Альбертина (Эльжбета) Соколовская
+0 @F0026@ FAM
+1 HUSB @P0115@
+1 WIFE @P0116@
+1 CHIL @P0097@
+1 CHIL @P0155@
+1 NOTE Source text: Вильгельм 19.04.1908 + Мария Виницкая 23.12.1914
+0 @F0027@ FAM
+1 HUSB @P0118@
+1 WIFE @P0119@
+1 CHIL @P0104@
+1 CHIL @P0140@
+1 CHIL @P0149@
+1 NOTE Source text: Фелициан 25.03.1824 + Анна Петровичева (л.329)
+0 @F0028@ FAM
+1 HUSB @P0125@
+1 WIFE @P0126@
+1 CHIL @P0068@
+1 CHIL @P0085@
+1 NOTE Source text: Клементий-Станислав-Костко кр. 13.11.1810г. + Бригида Кудревичева
+0 @F0029@ FAM
+1 HUSB @P0127@
+1 WIFE @P0128@
+1 CHIL @P0055@
+1 CHIL @P0072@
+1 CHIL @P0087@
+1 CHIL @P0093@
+1 CHIL @P0102@
+1 NOTE Source text: Ипполит р.06.10.1847 г. + Мария Гуща (л.233; 496; 505)
+0 @F0030@ FAM
+1 HUSB @P0138@
+1 WIFE @P0139@
+1 CHIL @P0011@
+1 CHIL @P0063@
+1 CHIL @P0069@
+1 CHIL @P0070@
+1 CHIL @P0115@
+1 CHIL @P0121@
+1 NOTE Source text: Фелициан 20.09.1864 (л 262) + Садалия Славошевская
+0 @F0031@ FAM
+1 HUSB @P0140@
+1 WIFE @P0141@
+1 CHIL @P0089@
+1 NOTE Source text: Адольф р.13.10.1866г. + Мария Юзефа Скальская (д.335)
+0 @F0032@ FAM
+1 HUSB @P0142@
+1 WIFE @P0143@
+1 CHIL @P0067@
+1 CHIL @P0086@
+1 CHIL @P0110@
+1 CHIL @P0153@
+1 NOTE Source text: Фаддей кр.07.08.1804 г. + Розалия Станкевич
+0 @F0033@ FAM
+1 HUSB @P0147@
+1 WIFE @P0148@
+1 CHIL @P0021@
+1 CHIL @P0049@
+1 CHIL @P0083@
+1 CHIL @P0100@
+1 CHIL @P0108@
+1 CHIL @P0133@
+1 NOTE Source text: Гилярий кр.19.04.1808 + Марианна Устинович (л.362)
+0 @F0034@ FAM
+1 HUSB @P0149@
+1 WIFE @P0150@
+1 CHIL @P0051@
+1 NOTE Source text: Апполинарий р. 09.02.1864 г. + Юзефа
+0 @F0035@ FAM
+1 HUSB @P0151@
+1 WIFE @P0152@
+1 CHIL @P0059@
+1 CHIL @P0107@
+1 CHIL @P0129@
+1 CHIL @P0135@
+1 CHIL @P0137@
+1 NOTE Source text: Петр 30.08.1853 (л.262) + Елизавета Антоновна (православная)
+0 @F0036@ FAM
+1 HUSB @P0163@
+1 WIFE @P0164@
+1 CHIL @P0094@
+1 CHIL @P0109@
+1 NOTE Source text: Доминик-Фабиан 10.07.1843 (л 354) + Паулина Пржигодская
+0 @F0037@ FAM
+1 HUSB @P0091@
+1 CHIL @P0007@
+1 CHIL @P0033@
+1 CHIL @P0042@
+1 NOTE Source text: Игнатий крещен 29.10.1796г. (лист 129 оборот)
+0 @F0038@ FAM
+1 HUSB @P0131@
+1 CHIL @P0073@
+1 NOTE Source text: Иосиф 25.03.1833
+0 @F0039@ FAM
+1 HUSB @P0144@
+1 CHIL @P0047@
+1 NOTE Source text: Петр 1915
+0 @F0040@ FAM
+1 HUSB @P0153@
+1 CHIL @P0081@
+1 CHIL @P0134@
+1 NOTE Source text: Викентий 13.07.1849
+0 @F0041@ FAM
+1 HUSB @P0154@
+1 CHIL @P0120@
+1 NOTE Source text: Михаил-Андрей кр.20.12.1811г.
+0 @F0042@ FAM
+1 HUSB @P0161@
+1 CHIL @P0147@
+1 NOTE Source text: Франц кр.03.09.1773 умер 19.06.1832
+0 @F0043@ FAM
+1 HUSB @P0165@
+1 CHIL @P0052@
+1 CHIL @P0125@
+1 NOTE Source text: Иван 1-й кр. 03.05.1774г (319-2-729 л.129 об 363)
+0 @F0044@ FAM
+1 HUSB @P0004@
+1 CHIL @P0048@
+1 CHIL @P0158@
+1 NOTE Source text: Климентий 22.12.1829
+0 @F0045@ FAM
+1 HUSB @P0023@
+1 CHIL @P0026@
+1 CHIL @P0027@
+1 CHIL @P0029@
+1 CHIL @P0091@
+1 CHIL @P0165@
+1 NOTE Source text: Стефан (Степан) крещен 16.10.1756г.
+0 @F0046@ FAM
+1 HUSB @P0025@
+1 CHIL @P0016@
+1 CHIL @P0064@
+1 CHIL @P0118@
+1 NOTE Source text: Ян (Иван) кр. 01.03.1780
+0 @F0047@ FAM
+1 HUSB @P0026@
+1 CHIL @P0004@
+1 CHIL @P0162@
+1 NOTE Source text: Матеуш-Иван (Матвей) кр.09.10.1796г.
+0 @F0048@ FAM
+1 HUSB @P0035@
+1 CHIL @P0013@
+1 CHIL @P0043@
+1 NOTE Source text: Людвиг
+0 @F0049@ FAM
+1 HUSB @P0042@
+1 CHIL @P0002@
+1 CHIL @P0151@
+1 NOTE Source text: Степан кр. 02.02.1833 г. в Борисовском костеле
+0 @F0050@ FAM
+1 HUSB @P0047@
+1 CHIL @P0015@
+1 NOTE Source text: Леонид 1949
+0 @F0051@ FAM
+1 HUSB @P0050@
+1 CHIL @P0062@
+1 CHIL @P0111@
+1 NOTE Source text: Иван Гракало-Горавский, жил 1525 г (фонд 319, оп 2, дело 729, листы 128, 134 об)
+0 @F0052@ FAM
+1 HUSB @P0052@
+1 CHIL @P0077@
+1 CHIL @P0099@
+1 NOTE Source text: Петр-Марцелл кр. 05.06.1814 г. (л.130)
+0 @F0053@ FAM
+1 HUSB @P0059@
+1 CHIL @P0144@
+1 NOTE Source text: Иван 01.07.1882
+0 @F0054@ FAM
+1 HUSB @P0062@
+1 CHIL @P0035@
+1 NOTE Source text: Даниил
+0 @F0055@ FAM
+1 HUSB @P0076@
+1 CHIL @P0079@
+1 NOTE Source text: Антон 01.07.1834 (лист 131 об)
+0 TRLR

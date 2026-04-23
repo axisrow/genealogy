@@ -1,0 +1,11 @@
+[project]
+name = "genealogy-converter"
+version = "0.1.0"
+description = "VDX to SQLite, GEDCOM, generated VDX, and static HTML genealogy converter"
+requires-python = ">=3.12"
+
+[project.scripts]
+genealogy = "genealogy.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

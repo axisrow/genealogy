@@ -4,6 +4,7 @@ import json
 import sqlite3
 from collections import defaultdict, deque
 from pathlib import Path
+import re
 from xml.sax.saxutils import escape
 
 from .db import connect
@@ -69,7 +70,7 @@ def export_html(db_path: str | Path, out_path: str | Path) -> dict[str, int]:
     finally:
         conn.close()
 
-    payload = {"persons": persons, "families": families, "children": children, "media": media}
+    payload = _build_html_payload(persons, families, children, media)
     html = HTML_TEMPLATE.replace("__DATA__", json.dumps(payload, ensure_ascii=False))
     _write_text(out_path, html)
     return {"persons": len(persons), "families": len(families)}
@@ -194,6 +195,273 @@ def _write_text(path: str | Path, text: str) -> None:
     out_path.write_text(text, encoding="utf-8")
 
 
+FAMILY_WIDTH = 260
+FAMILY_HEIGHT = 100
+PERSON_WIDTH = 144
+PERSON_HEIGHT = 40
+ROOT_GAP = 96
+CHILD_GAP = 30
+DESCENDANT_GAP = 36
+CHILD_ROW_GAP = 56
+FAMILY_STACK_GAP = 70
+CANVAS_PADDING = 56
+
+
+def _build_html_payload(persons: list[dict], families: list[dict], children: list[dict], media: list[dict]) -> dict:
+    person_by_id = {person["person_id"]: person for person in persons}
+    family_by_id = {family["family_id"]: family for family in families}
+    children_by_family: dict[str, list[str]] = defaultdict(list)
+    families_by_person: dict[str, list[str]] = defaultdict(list)
+    parent_family_by_child: dict[str, list[str]] = defaultdict(list)
+    media_by_person: dict[str, list[dict]] = defaultdict(list)
+
+    for item in media:
+        media_by_person[item["person_id"]].append(item)
+    for family in families:
+        for person_id in (family["spouse1_person_id"], family["spouse2_person_id"]):
+            if person_id:
+                families_by_person[person_id].append(family["family_id"])
+    for link in children:
+        children_by_family[link["family_id"]].append(link["child_person_id"])
+        parent_family_by_child[link["child_person_id"]].append(link["family_id"])
+
+    roots = [
+        family["family_id"]
+        for family in families
+        if all(
+            spouse_id not in parent_family_by_child
+            for spouse_id in (family["spouse1_person_id"], family["spouse2_person_id"])
+            if spouse_id
+        )
+    ]
+    if not roots:
+        roots = [family["family_id"] for family in families]
+
+    measure_cache: dict[str, dict] = {}
+
+    def descendants_for_child(parent_family_id: str, child_person_id: str) -> list[str]:
+        family_ids = []
+        for family_id in families_by_person.get(child_person_id, []):
+            if family_id != parent_family_id:
+                family_ids.append(family_id)
+        return sorted(dict.fromkeys(family_ids))
+
+    def measure_family(family_id: str, stack: tuple[str, ...]) -> dict:
+        if family_id in measure_cache:
+            return measure_cache[family_id]
+        if family_id in stack:
+            return {
+                "width": FAMILY_WIDTH,
+                "height": FAMILY_HEIGHT,
+                "children_width": 0,
+                "max_child_block_height": 0,
+                "child_measures": [],
+            }
+
+        child_measures = []
+        max_child_block_height = 0
+        total_children_width = 0
+        for child_person_id in children_by_family.get(family_id, []):
+            descendant_ids = descendants_for_child(family_id, child_person_id)
+            descendant_measures = [measure_family(descendant_id, stack + (family_id,)) for descendant_id in descendant_ids]
+            descendants_width = 0
+            descendants_height = 0
+            if descendant_measures:
+                descendants_width = sum(item["width"] for item in descendant_measures) + DESCENDANT_GAP * (len(descendant_measures) - 1)
+                descendants_height = max(item["height"] for item in descendant_measures)
+            span_width = max(PERSON_WIDTH, descendants_width)
+            span_height = PERSON_HEIGHT + (FAMILY_STACK_GAP + descendants_height if descendant_measures else 0)
+            child_measure = {
+                "person_id": child_person_id,
+                "descendant_ids": descendant_ids,
+                "descendant_measures": descendant_measures,
+                "span_width": span_width,
+                "span_height": span_height,
+                "descendants_width": descendants_width,
+                "descendants_height": descendants_height,
+            }
+            child_measures.append(child_measure)
+            total_children_width += span_width
+            max_child_block_height = max(max_child_block_height, span_height)
+        if child_measures:
+            total_children_width += CHILD_GAP * (len(child_measures) - 1)
+        measurement = {
+            "width": max(FAMILY_WIDTH, total_children_width),
+            "height": FAMILY_HEIGHT + (CHILD_ROW_GAP + max_child_block_height if child_measures else 0),
+            "children_width": total_children_width,
+            "max_child_block_height": max_child_block_height,
+            "child_measures": child_measures,
+        }
+        measure_cache[family_id] = measurement
+        return measurement
+
+    family_nodes: list[dict] = []
+    child_nodes: list[dict] = []
+    edges: list[dict] = []
+    focus_nodes: dict[str, list[str]] = defaultdict(list)
+    rendered_families: set[str] = set()
+    root_measures = [measure_family(root_id, ()) for root_id in roots]
+    total_width = sum(item["width"] for item in root_measures) + ROOT_GAP * max(0, len(root_measures) - 1)
+    max_height = max((item["height"] for item in root_measures), default=FAMILY_HEIGHT)
+
+    def person_card_data(person_id: str) -> dict:
+        person = person_by_id[person_id]
+        return {
+            "person_id": person_id,
+            "name": person["display_name"],
+            "name_lines": _wrap_label(person["display_name"], 16, 2),
+            "years": _short_year_label(person),
+        }
+
+    def family_card_data(family_id: str, x: float, y: float) -> dict:
+        family = family_by_id[family_id]
+        spouses = [
+            person_card_data(person_id)
+            for person_id in (family["spouse1_person_id"], family["spouse2_person_id"])
+            if person_id and person_id in person_by_id
+        ]
+        for spouse in spouses:
+            focus_nodes[spouse["person_id"]].append(family_id)
+        return {
+            "family_id": family_id,
+            "x": round(x, 2),
+            "y": round(y, 2),
+            "width": FAMILY_WIDTH,
+            "height": FAMILY_HEIGHT,
+            "spouses": spouses,
+        }
+
+    def layout_family(family_id: str, left: float, top: float, measurement: dict) -> None:
+        if family_id in rendered_families:
+            return
+        rendered_families.add(family_id)
+        family_x = left + (measurement["width"] - FAMILY_WIDTH) / 2
+        family_nodes.append(family_card_data(family_id, family_x, top))
+
+        if not measurement["child_measures"]:
+            return
+
+        family_center_x = family_x + FAMILY_WIDTH / 2
+        child_row_y = top + FAMILY_HEIGHT + CHILD_ROW_GAP
+        cursor_x = left + (measurement["width"] - measurement["children_width"]) / 2
+        for child_measure in measurement["child_measures"]:
+            child_x = cursor_x + (child_measure["span_width"] - PERSON_WIDTH) / 2
+            child_node_id = f"{family_id}:{child_measure['person_id']}"
+            child_nodes.append(
+                {
+                    "node_id": child_node_id,
+                    "family_id": family_id,
+                    "x": round(child_x, 2),
+                    "y": round(child_row_y, 2),
+                    "width": PERSON_WIDTH,
+                    "height": PERSON_HEIGHT,
+                    **person_card_data(child_measure["person_id"]),
+                }
+            )
+            focus_nodes[child_measure["person_id"]].append(child_node_id)
+            child_center_x = child_x + PERSON_WIDTH / 2
+            edges.append(
+                {
+                    "kind": "family-child",
+                    "from_x": round(family_center_x, 2),
+                    "from_y": round(top + FAMILY_HEIGHT, 2),
+                    "to_x": round(child_center_x, 2),
+                    "to_y": round(child_row_y, 2),
+                }
+            )
+            if child_measure["descendant_measures"]:
+                descendant_total_width = child_measure["descendants_width"]
+                descendant_left = cursor_x + (child_measure["span_width"] - descendant_total_width) / 2
+                descendant_top = child_row_y + PERSON_HEIGHT + FAMILY_STACK_GAP
+                current_left = descendant_left
+                for descendant_id, descendant_measure in zip(
+                    child_measure["descendant_ids"], child_measure["descendant_measures"], strict=False
+                ):
+                    descendant_center_x = current_left + descendant_measure["width"] / 2
+                    edges.append(
+                        {
+                            "kind": "child-family",
+                            "from_x": round(child_center_x, 2),
+                            "from_y": round(child_row_y + PERSON_HEIGHT, 2),
+                            "to_x": round(descendant_center_x, 2),
+                            "to_y": round(descendant_top, 2),
+                        }
+                    )
+                    layout_family(descendant_id, current_left, descendant_top, descendant_measure)
+                    current_left += descendant_measure["width"] + DESCENDANT_GAP
+            cursor_x += child_measure["span_width"] + CHILD_GAP
+
+    current_left = CANVAS_PADDING
+    for root_id, root_measure in zip(roots, root_measures, strict=False):
+        layout_family(root_id, current_left, CANVAS_PADDING, root_measure)
+        current_left += root_measure["width"] + ROOT_GAP
+
+    details = []
+    for person in persons:
+        details.append(
+            {
+                **person,
+                "years": _short_year_label(person),
+                "media": media_by_person.get(person["person_id"], []),
+                "focus_nodes": focus_nodes.get(person["person_id"], []),
+            }
+        )
+
+    return {
+        "persons": details,
+        "familyNodes": family_nodes,
+        "childNodes": child_nodes,
+        "edges": edges,
+        "canvas": {
+            "width": round(total_width + CANVAS_PADDING * 2, 2),
+            "height": round(max_height + CANVAS_PADDING * 2, 2),
+        },
+    }
+
+
+def _parse_year(value: str | None) -> str:
+    if not value:
+        return ""
+    match = re.search(r"(\d{4})", value)
+    return match.group(1) if match else ""
+
+
+def _short_year_label(person: dict) -> str:
+    start = _parse_year(person.get("birth")) or _parse_year(person.get("christening"))
+    end = _parse_year(person.get("death"))
+    if start and end:
+        return f"{start}-{end}"
+    if start:
+        return start
+    if end:
+        return f"?-{end}"
+    return ""
+
+
+def _wrap_label(text: str, max_chars: int, max_lines: int) -> list[str]:
+    words = text.split()
+    if not words:
+        return [text]
+    lines: list[str] = []
+    current = words[0]
+    for word in words[1:]:
+        candidate = f"{current} {word}"
+        if len(candidate) <= max_chars:
+            current = candidate
+        else:
+            lines.append(current)
+            current = word
+            if len(lines) == max_lines - 1:
+                break
+    lines.append(current)
+    remainder = words[len(" ".join(lines).split()):]
+    if remainder:
+        lines[-1] = (lines[-1] + " " + " ".join(remainder)).strip()
+    if len(lines[-1]) > max_chars + 6:
+        lines[-1] = lines[-1][: max_chars + 3].rstrip() + "..."
+    return lines[:max_lines]
+
+
 HTML_TEMPLATE = """<!doctype html>
 <html lang="en">
 <head>
@@ -202,92 +470,275 @@ HTML_TEMPLATE = """<!doctype html>
 <title>Genealogy Tree</title>
 <style>
 :root { color-scheme: light; font-family: Arial, sans-serif; }
-body { margin: 0; background: #f6f7f9; color: #1c2430; }
-header { padding: 16px 20px; background: #ffffff; border-bottom: 1px solid #d8dee8; display: flex; gap: 12px; align-items: center; }
-h1 { font-size: 20px; margin: 0; }
-#search { max-width: 360px; width: 40vw; padding: 9px 11px; border: 1px solid #aeb8c7; border-radius: 6px; font-size: 14px; }
-main { display: grid; grid-template-columns: minmax(260px, 1fr) 340px; min-height: calc(100vh - 58px); }
-#tree { padding: 18px 20px 40px; overflow: auto; }
-#detail { background: #ffffff; border-left: 1px solid #d8dee8; padding: 18px; }
-.node { margin: 4px 0 4px var(--depth); }
-.row { display: inline-flex; align-items: center; gap: 8px; min-height: 30px; }
-button.toggle { width: 24px; height: 24px; border: 1px solid #9aa6b6; background: #fff; border-radius: 4px; cursor: pointer; }
-button.person { border: 1px solid #b9c2d0; background: #fff; border-radius: 6px; padding: 6px 10px; cursor: pointer; }
-button.person:hover, button.person.active { border-color: #245b9d; background: #eaf2fb; }
+body { margin: 0; background: #f5f7fb; color: #1c2430; }
+header { padding: 14px 18px; background: #ffffff; border-bottom: 1px solid #d8dee8; display: flex; gap: 12px; align-items: center; }
+h1 { font-size: 20px; margin: 0; white-space: nowrap; }
+#search { flex: 1; min-width: 180px; max-width: 420px; padding: 10px 12px; border: 1px solid #aeb8c7; border-radius: 6px; font-size: 14px; }
+.toolbar { display: inline-flex; gap: 8px; margin-left: auto; }
+.icon-btn { width: 32px; height: 32px; border: 1px solid #aeb8c7; border-radius: 6px; background: #fff; cursor: pointer; font-size: 16px; }
+main { display: grid; grid-template-columns: minmax(320px, 1fr) 360px; min-height: calc(100vh - 61px); }
+#tree-shell { padding: 0; overflow: hidden; position: relative; background: #eef3fb; }
+#tree-svg { width: 100%; height: 100%; display: block; cursor: grab; user-select: none; }
+#tree-svg.dragging { cursor: grabbing; }
+#detail { background: #ffffff; border-left: 1px solid #d8dee8; padding: 20px; overflow: auto; }
 .muted { color: #637083; font-size: 13px; }
-.photo { max-width: 100%; border-radius: 6px; border: 1px solid #d8dee8; margin: 10px 0; }
+.detail-header { margin-bottom: 14px; }
+.detail-header h2 { margin: 0 0 6px; font-size: 22px; }
+.photo { max-width: 100%; border-radius: 6px; border: 1px solid #d8dee8; margin: 10px 0; display: block; }
+.family-card { fill: #ffffff; stroke: #8ea2bd; stroke-width: 1.4; }
+.family-card.active { stroke: #1d5ea8; stroke-width: 2.2; }
+.family-divider { stroke: #d5dde9; stroke-width: 1; }
+.person-card { fill: #ffffff; stroke: #adb8c8; stroke-width: 1.2; }
+.person-card.active { fill: #edf5ff; stroke: #1d5ea8; stroke-width: 2; }
+.edge { fill: none; stroke: #94a4bb; stroke-width: 1.4; }
+.label-name { fill: #1b2431; font-size: 13px; font-weight: 600; }
+.label-year { fill: #66758a; font-size: 11px; }
+.spouse-hit, .child-hit { fill: transparent; cursor: pointer; }
+.empty-state { color: #5f6f84; font-size: 14px; padding: 24px; }
 @media (max-width: 760px) {
   header { flex-wrap: wrap; }
-  #search { width: 100%; max-width: none; }
+  #search { width: 100%; max-width: none; flex-basis: 100%; }
+  .toolbar { margin-left: 0; }
   main { grid-template-columns: 1fr; }
-  #detail { border-left: 0; border-top: 1px solid #d8dee8; }
+  #tree-shell { min-height: 62vh; }
+  #detail { border-left: 0; border-top: 1px solid #d8dee8; min-height: 30vh; }
 }
 </style>
 </head>
 <body>
-<header><h1>Genealogy Tree</h1><input id="search" type="search" placeholder="Search people"></header>
-<main><section id="tree"></section><aside id="detail"><p class="muted">Select a person to view details.</p></aside></main>
+<header>
+  <h1>Genealogy Tree</h1>
+  <input id="search" type="search" placeholder="Search people">
+  <div class="toolbar">
+    <button id="zoom-in" class="icon-btn" type="button" title="Zoom in">+</button>
+    <button id="zoom-out" class="icon-btn" type="button" title="Zoom out">-</button>
+    <button id="reset-view" class="icon-btn" type="button" title="Reset view">&#8962;</button>
+  </div>
+</header>
+<main>
+  <section id="tree-shell">
+    <svg id="tree-svg" viewBox="0 0 100 100" aria-label="Genealogy tree">
+      <g id="viewport"></g>
+    </svg>
+  </section>
+  <aside id="detail"><div class="empty-state">Select a person to view details.</div></aside>
+</main>
 <script id="tree-data" type="application/json">__DATA__</script>
 <script>
 const data = JSON.parse(document.getElementById('tree-data').textContent);
-const people = new Map(data.persons.map(p => [p.person_id, p]));
-const mediaByPerson = new Map();
-for (const item of data.media) {
-  if (!mediaByPerson.has(item.person_id)) mediaByPerson.set(item.person_id, []);
-  mediaByPerson.get(item.person_id).push(item);
-}
-const childrenByFamily = new Map();
-for (const link of data.children) {
-  if (!childrenByFamily.has(link.family_id)) childrenByFamily.set(link.family_id, []);
-  childrenByFamily.get(link.family_id).push(link.child_person_id);
-}
-const familiesBySpouse = new Map();
-for (const family of data.families) {
-  for (const pid of [family.spouse1_person_id, family.spouse2_person_id]) {
-    if (!pid) continue;
-    if (!familiesBySpouse.has(pid)) familiesBySpouse.set(pid, []);
-    familiesBySpouse.get(pid).push(family);
-  }
-}
-const childIds = new Set(data.children.map(c => c.child_person_id));
-const roots = data.persons.filter(p => !childIds.has(p.person_id));
-const collapsed = new Set();
-const tree = document.getElementById('tree');
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const people = new Map(data.persons.map(person => [person.person_id, person]));
+const focusNodes = new Map();
+for (const person of data.persons) focusNodes.set(person.person_id, person.focus_nodes || []);
+const viewport = document.getElementById('viewport');
+const svg = document.getElementById('tree-svg');
 const detail = document.getElementById('detail');
-function render(filter = '') {
-  tree.innerHTML = '';
-  const lower = filter.trim().toLowerCase();
-  const shown = lower ? data.persons.filter(p => p.display_name.toLowerCase().includes(lower)) : roots;
-  for (const person of shown) renderPerson(person.person_id, 0, new Set());
+let selectedPersonId = null;
+let scale = 1;
+let translateX = 0;
+let translateY = 0;
+let dragState = null;
+
+function el(name, attrs = {}) {
+  const node = document.createElementNS(SVG_NS, name);
+  for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+  return node;
 }
-function renderPerson(personId, depth, seen) {
-  if (seen.has(personId) || !people.has(personId)) return;
-  seen.add(personId);
-  const person = people.get(personId);
-  const row = document.createElement('div');
-  row.className = 'node';
-  row.style.setProperty('--depth', `${depth * 22}px`);
-  const children = [];
-  for (const family of familiesBySpouse.get(personId) || []) children.push(...(childrenByFamily.get(family.family_id) || []));
-  row.innerHTML = `<span class="row"><button class="toggle" title="Expand or collapse">${collapsed.has(personId) ? '+' : '-'}</button><button class="person">${person.display_name}</button><span class="muted">${person.birth || person.christening || ''}</span></span>`;
-  row.querySelector('.toggle').onclick = () => { collapsed.has(personId) ? collapsed.delete(personId) : collapsed.add(personId); render(document.getElementById('search').value); };
-  row.querySelector('.person').onclick = () => showPerson(personId);
-  tree.appendChild(row);
-  if (!collapsed.has(personId)) for (const childId of children) renderPerson(childId, depth + 1, new Set(seen));
+
+function updateViewport() {
+  viewport.setAttribute('transform', `translate(${translateX} ${translateY}) scale(${scale})`);
 }
+
+function fitTree() {
+  const width = Math.max(svg.clientWidth || 100, 100);
+  const height = Math.max(svg.clientHeight || 100, 100);
+  const pad = 24;
+  scale = Math.min((width - pad * 2) / data.canvas.width, (height - pad * 2) / data.canvas.height, 1);
+  translateX = (width - data.canvas.width * scale) / 2;
+  translateY = 18;
+  updateViewport();
+}
+
+function centerOnPoint(x, y) {
+  const width = Math.max(svg.clientWidth || 100, 100);
+  const height = Math.max(svg.clientHeight || 100, 100);
+  translateX = width / 2 - x * scale;
+  translateY = height / 2 - y * scale;
+  updateViewport();
+}
+
 function showPerson(personId) {
+  selectedPersonId = personId;
   const person = people.get(personId);
-  const photos = mediaByPerson.get(personId) || [];
-  detail.innerHTML = `<h2>${person.display_name}</h2>
-    <p class="muted">${person.person_id}${person.source_visio_id ? ' | ' + person.source_visio_id : ''}</p>
+  if (!person) return;
+  detail.innerHTML = `<div class="detail-header"><h2>${person.display_name}</h2><div class="muted">${person.years || ''}${person.source_visio_id ? ' | ' + person.source_visio_id : ''}</div></div>
     ${person.birth ? `<p><strong>Birth:</strong> ${person.birth}</p>` : ''}
     ${person.christening ? `<p><strong>Christening:</strong> ${person.christening}</p>` : ''}
     ${person.death ? `<p><strong>Death:</strong> ${person.death}</p>` : ''}
     ${person.notes ? `<p><strong>Notes:</strong> ${person.notes}</p>` : ''}
-    ${photos.map(photo => `<figure><img class="photo" src="${photo.relative_file_path}" alt="${photo.title || person.display_name}"><figcaption>${photo.title || ''}</figcaption></figure>`).join('')}`;
+    ${(person.media || []).map(photo => `<figure><img class="photo" src="${photo.relative_file_path}" alt="${photo.title || person.display_name}"><figcaption>${photo.title || ''}</figcaption></figure>`).join('')}`;
+  renderTree();
 }
-document.getElementById('search').addEventListener('input', event => render(event.target.value));
-render();
+
+function drawEdge(edge) {
+  const midY = edge.kind === 'family-child' ? edge.from_y + 24 : edge.from_y + 22;
+  return el('path', {
+    class: 'edge',
+    d: `M ${edge.from_x} ${edge.from_y} L ${edge.from_x} ${midY} L ${edge.to_x} ${midY} L ${edge.to_x} ${edge.to_y}`
+  });
+}
+
+function addTextLines(group, lines, x, startY, className) {
+  lines.forEach((line, index) => {
+    const text = el('text', { x, y: startY + index * 15, class: className, 'text-anchor': 'middle' });
+    text.textContent = line;
+    group.appendChild(text);
+  });
+}
+
+function drawFamily(node) {
+  const group = el('g', { 'data-family-id': node.family_id });
+  const active = selectedPersonId && node.spouses.some(spouse => spouse.person_id === selectedPersonId);
+  group.appendChild(el('rect', {
+    x: node.x,
+    y: node.y,
+    rx: 8,
+    ry: 8,
+    width: node.width,
+    height: node.height,
+    class: active ? 'family-card active' : 'family-card'
+  }));
+  const hasTwo = node.spouses.length === 2;
+  if (hasTwo) {
+    group.appendChild(el('line', {
+      x1: node.x + node.width / 2,
+      y1: node.y + 8,
+      x2: node.x + node.width / 2,
+      y2: node.y + node.height - 8,
+      class: 'family-divider'
+    }));
+  }
+  node.spouses.forEach((spouse, index) => {
+    const sectionWidth = hasTwo ? node.width / 2 : node.width;
+    const left = node.x + (hasTwo ? index * sectionWidth : 0);
+    const centerX = left + sectionWidth / 2;
+    const lines = spouse.name_lines || [spouse.name];
+    addTextLines(group, lines, centerX, node.y + 28, 'label-name');
+    if (spouse.years) {
+      const years = el('text', { x: centerX, y: node.y + 80, class: 'label-year', 'text-anchor': 'middle' });
+      years.textContent = spouse.years;
+      group.appendChild(years);
+    }
+    const hit = el('rect', {
+      x: left,
+      y: node.y,
+      width: sectionWidth,
+      height: node.height,
+      class: 'spouse-hit'
+    });
+    hit.addEventListener('click', () => showPerson(spouse.person_id));
+    group.appendChild(hit);
+  });
+  return group;
+}
+
+function drawChild(node) {
+  const group = el('g', { 'data-node-id': node.node_id });
+  const active = selectedPersonId === node.person_id;
+  group.appendChild(el('rect', {
+    x: node.x,
+    y: node.y,
+    rx: 8,
+    ry: 8,
+    width: node.width,
+    height: node.height,
+    class: active ? 'person-card active' : 'person-card'
+  }));
+  addTextLines(group, node.name_lines || [node.name], node.x + node.width / 2, node.y + 18, 'label-name');
+  if (node.years) {
+    const years = el('text', { x: node.x + node.width / 2, y: node.y + node.height - 8, class: 'label-year', 'text-anchor': 'middle' });
+    years.textContent = node.years;
+    group.appendChild(years);
+  }
+  const hit = el('rect', {
+    x: node.x,
+    y: node.y,
+    width: node.width,
+    height: node.height,
+    class: 'child-hit'
+  });
+  hit.addEventListener('click', () => showPerson(node.person_id));
+  group.appendChild(hit);
+  return group;
+}
+
+function renderTree() {
+  viewport.innerHTML = '';
+  svg.setAttribute('viewBox', `0 0 ${Math.max(data.canvas.width, 100)} ${Math.max(data.canvas.height, 100)}`);
+  data.edges.forEach(edge => viewport.appendChild(drawEdge(edge)));
+  data.familyNodes.forEach(node => viewport.appendChild(drawFamily(node)));
+  data.childNodes.forEach(node => viewport.appendChild(drawChild(node)));
+  updateViewport();
+}
+
+function focusPerson(personId) {
+  const targets = focusNodes.get(personId) || [];
+  if (!targets.length) return;
+  showPerson(personId);
+  const family = data.familyNodes.find(node => node.family_id === targets[0]);
+  const child = data.childNodes.find(node => node.node_id === targets[0]);
+  const target = family || child;
+  if (target) centerOnPoint(target.x + target.width / 2, target.y + target.height / 2);
+}
+
+function applySearch(rawValue) {
+  const value = rawValue.trim().toLowerCase();
+  if (!value) {
+    selectedPersonId = null;
+    detail.innerHTML = '<div class="empty-state">Select a person to view details.</div>';
+    renderTree();
+    return;
+  }
+  const match = data.persons.find(person => person.display_name.toLowerCase().includes(value));
+  if (match) {
+    focusPerson(match.person_id);
+  }
+}
+
+document.getElementById('search').addEventListener('input', event => applySearch(event.target.value));
+document.getElementById('zoom-in').addEventListener('click', () => { scale = Math.min(scale * 1.2, 2.6); updateViewport(); });
+document.getElementById('zoom-out').addEventListener('click', () => { scale = Math.max(scale / 1.2, 0.2); updateViewport(); });
+document.getElementById('reset-view').addEventListener('click', fitTree);
+svg.addEventListener('mousedown', event => {
+  dragState = { x: event.clientX, y: event.clientY, tx: translateX, ty: translateY };
+  svg.classList.add('dragging');
+});
+window.addEventListener('mousemove', event => {
+  if (!dragState) return;
+  translateX = dragState.tx + (event.clientX - dragState.x);
+  translateY = dragState.ty + (event.clientY - dragState.y);
+  updateViewport();
+});
+window.addEventListener('mouseup', () => {
+  dragState = null;
+  svg.classList.remove('dragging');
+});
+svg.addEventListener('wheel', event => {
+  event.preventDefault();
+  const rect = svg.getBoundingClientRect();
+  const mouseX = event.clientX - rect.left;
+  const mouseY = event.clientY - rect.top;
+  const worldX = (mouseX - translateX) / scale;
+  const worldY = (mouseY - translateY) / scale;
+  const nextScale = event.deltaY < 0 ? Math.min(scale * 1.1, 2.8) : Math.max(scale / 1.1, 0.18);
+  translateX = mouseX - worldX * nextScale;
+  translateY = mouseY - worldY * nextScale;
+  scale = nextScale;
+  updateViewport();
+}, { passive: false });
+window.addEventListener('resize', fitTree);
+renderTree();
+fitTree();
 </script>
 </body>
 </html>

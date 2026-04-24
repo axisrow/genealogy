@@ -97,6 +97,30 @@ class ConverterTests(unittest.TestCase):
             self.assertIn("<VisioDocument", vdx_text)
             self.assertIn("Dynamic connector", vdx_text)
 
+    def test_html_export_builds_svg_family_tree_view(self):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            vdx = root / "sample.vdx"
+            db = root / "genealogy.sqlite"
+            html = root / "site" / "index.html"
+            vdx.write_text(SAMPLE_VDX, encoding="utf-8")
+
+            run(["import-vdx", str(vdx), "--db", str(db)])
+            run(["export-html", "--db", str(db), "--out", str(html)])
+
+            html_text = html.read_text(encoding="utf-8")
+
+            self.assertIn('<svg id="tree-svg"', html_text)
+            self.assertIn('familyNodes', html_text)
+            self.assertIn('viewport"', html_text)
+            self.assertIn('zoom-in', html_text)
+            self.assertIn('reset-view', html_text)
+            self.assertIn('Jan', html_text)
+            self.assertIn('Anna Kowalska', html_text)
+            self.assertIn('1900', html_text)
+            self.assertNotIn('button class="toggle"', html_text)
+            self.assertNotIn('renderPerson(', html_text)
+
 
 if __name__ == "__main__":
     unittest.main()

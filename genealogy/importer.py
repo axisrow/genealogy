@@ -103,9 +103,13 @@ def _name_parts(display_name: str) -> tuple[str, str]:
 def import_vdx(vdx_path: str | Path, db_path: str | Path, review_path: str | Path | None = None) -> dict[str, int]:
     data = parse_vdx_file(vdx_path)
     conn = connect(db_path)
+    media_snapshot = _snapshot_media(conn)
     init_db(conn, reset=True)
     try:
         stats = import_vdx_data(conn, data)
+        restored_media = _restore_media_snapshot(conn, media_snapshot)
+        stats["issues"] = conn.execute("select count(*) from import_issues").fetchone()[0]
+        stats["media_restored"] = restored_media
         conn.commit()
         if review_path:
             write_review_csv(conn, review_path)
@@ -222,6 +226,59 @@ def import_vdx_data(conn: sqlite3.Connection, data: VdxData) -> dict[str, int]:
         "relationships": conn.execute("select count(*) from family_children").fetchone()[0],
         "issues": conn.execute("select count(*) from import_issues").fetchone()[0],
     }
+
+
+def _table_exists(conn: sqlite3.Connection, table_name: str) -> bool:
+    row = conn.execute("select 1 from sqlite_master where type = 'table' and name = ?", (table_name,)).fetchone()
+    return row is not None
+
+
+def _snapshot_media(conn: sqlite3.Connection) -> list[dict]:
+    if not _table_exists(conn, "media") or not _table_exists(conn, "persons"):
+        return []
+    rows = conn.execute(
+        """
+        select
+            media.person_id,
+            persons.display_name,
+            media.relative_file_path,
+            media.title,
+            media.media_type,
+            media.notes
+        from media
+        join persons on persons.person_id = media.person_id
+        order by media.media_id
+        """
+    ).fetchall()
+    return [dict(row) for row in rows]
+
+
+def _restore_media_snapshot(conn: sqlite3.Connection, snapshot: list[dict]) -> int:
+    restored = 0
+    for item in snapshot:
+        person = conn.execute("select display_name from persons where person_id = ?", (item["person_id"],)).fetchone()
+        if person and person["display_name"] == item["display_name"]:
+            conn.execute(
+                "insert into media (person_id, relative_file_path, title, media_type, notes) values (?, ?, ?, ?, ?)",
+                (
+                    item["person_id"],
+                    item["relative_file_path"],
+                    item["title"],
+                    item["media_type"],
+                    item["notes"],
+                ),
+            )
+            restored += 1
+            continue
+        add_issue(
+            conn,
+            None,
+            item["person_id"],
+            "media_not_restored",
+            "Media row did not match an imported person after reset",
+            item["relative_file_path"],
+        )
+    return restored
 
 
 def add_issue(

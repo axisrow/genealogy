@@ -115,21 +115,27 @@ figcaption { font-size: 12px; color: var(--ink-muted); }
 .ov-name { fill: var(--ink); font-size: 11px; font-weight: 600; }
 .ov-year { fill: var(--ink-muted); font-size: 10px; font-variant-numeric: tabular-nums; }
 
+#backdrop { display: none; position: fixed; inset: 55px 0 0 0; background: rgba(0,0,0,0.3); z-index: 9; }
 @media (max-width: 960px) {
   main { grid-template-columns: 280px 1fr; }
-  #detail { display: none; }
-  #detail.open { display: block; position: fixed; right: 0; top: 55px; bottom: 0; width: min(340px, 94vw); z-index: 12; box-shadow: -4px 0 16px rgba(0,0,0,0.06); }
+  #detail { position: fixed; right: 0; top: 55px; bottom: 0; width: min(340px, 94vw); z-index: 12; box-shadow: -4px 0 16px rgba(0,0,0,0.06); transform: translateX(100%); transition: transform 240ms; }
+  #detail.open { transform: translateX(0); }
+  #backdrop.visible { display: block; }
 }
 @media (max-width: 720px) {
   main { grid-template-columns: 1fr; }
   #drawer-toggle { display: inline-flex; }
   #sidebar { position: fixed; left: 0; top: 55px; bottom: 0; width: min(300px, 88vw); z-index: 10; transform: translateX(-100%); transition: transform 240ms; box-shadow: 4px 0 16px rgba(0,0,0,0.08); }
   #sidebar.open { transform: translateX(0); }
-  #detail.open { width: min(340px, 94vw); }
+  #detail { width: min(340px, 94vw); }
+}
+@media (max-width: 480px) {
+  #zoom-in, #zoom-out, #reset-view { display: none; }
 }
 </style>
 </head>
 <body>
+<div id="backdrop"></div>
 <header>
   <button id="drawer-toggle" class="icon-btn" type="button" title="Toggle people list" aria-label="Toggle people list"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="1" width="5" height="14" rx="2" fill="currentColor"/></svg></button>
   <h1>Genealogy Tree</h1>
@@ -1119,18 +1125,52 @@ document.getElementById('zoom-in').addEventListener('click', () => { viewScale =
 document.getElementById('zoom-out').addEventListener('click', () => { viewScale = Math.max(viewScale / 1.2, 0.2); applyViewport(); });
 document.getElementById('reset-view').addEventListener('click', () => fitSceneToViewport(true));
 const mainEl = document.querySelector('main');
-sidebar.classList.add('open');
-detail.classList.add('open');
+const backdrop = document.getElementById('backdrop');
+
+function isMobile() { return window.innerWidth <= 720; }
+function isTablet() { return window.innerWidth <= 960; }
+
+function updateBackdrop() {
+  const sidebarOpen = sidebar.classList.contains('open');
+  const detailOpen = detail.classList.contains('open');
+  const showBackdrop = isTablet() && (sidebarOpen && isMobile() || detailOpen);
+  backdrop.classList.toggle('visible', showBackdrop);
+}
+
+function closePanels() {
+  sidebar.classList.remove('open');
+  detail.classList.remove('open');
+  backdrop.classList.remove('visible');
+  requestAnimationFrame(() => fitSceneToViewport());
+}
+
+backdrop.addEventListener('click', closePanels);
+
+if (window.innerWidth > 720) sidebar.classList.add('open');
+if (window.innerWidth > 960) detail.classList.add('open');
+
 document.getElementById('drawer-toggle').addEventListener('click', () => {
   const closing = sidebar.classList.contains('open');
   sidebar.classList.toggle('open');
-  if (window.innerWidth > 720) mainEl.classList.toggle('sidebar-closed', closing);
+  if (!isMobile()) mainEl.classList.toggle('sidebar-closed', closing);
+  updateBackdrop();
   requestAnimationFrame(() => fitSceneToViewport());
 });
 document.getElementById('detail-toggle').addEventListener('click', () => {
   const closing = detail.classList.contains('open');
   detail.classList.toggle('open');
-  if (window.innerWidth > 960) mainEl.classList.toggle('detail-closed', closing);
+  if (!isTablet()) mainEl.classList.toggle('detail-closed', closing);
+  updateBackdrop();
+  requestAnimationFrame(() => fitSceneToViewport());
+});
+
+window.addEventListener('resize', () => {
+  mainEl.classList.remove('sidebar-closed', 'detail-closed');
+  if (!isMobile()) { if (!sidebar.classList.contains('open')) sidebar.classList.add('open'); }
+  else { sidebar.classList.remove('open'); }
+  if (!isTablet()) { if (!detail.classList.contains('open')) detail.classList.add('open'); }
+  else { detail.classList.remove('open'); }
+  backdrop.classList.remove('visible');
   requestAnimationFrame(() => fitSceneToViewport());
 });
 

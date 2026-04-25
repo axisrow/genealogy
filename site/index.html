@@ -46,6 +46,7 @@ main.sidebar-closed { grid-template-columns: 0 minmax(0, 1fr) 320px; }
 main.sidebar-closed #sidebar { overflow: hidden; min-width: 0; }
 main.detail-closed { grid-template-columns: 280px minmax(0, 1fr) 0; }
 main.detail-closed #detail { overflow: hidden; min-width: 0; }
+main.sidebar-closed.detail-closed { grid-template-columns: 0 minmax(0, 1fr) 0; }
 #sidebar { background: var(--surface); border-right: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; }
 #search { width: calc(100% - 24px); margin: 12px; padding: 9px 11px; border: 1px solid var(--border-strong); border-radius: 6px; font: inherit; background: var(--bg); }
 #search:focus { outline: 2px solid var(--focus-ring); outline-offset: -1px; }
